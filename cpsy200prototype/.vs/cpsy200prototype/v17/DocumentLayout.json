@@ -7,6 +7,18 @@
       "RelativeMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|solutionrelative:components\\layout\\navmenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|c:\\users\\mryla\\documents\\fbe\\cpsy200prototype\\cpsy200prototype\\components\\pages\\addequipment.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|solutionrelative:components\\pages\\addequipment.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|c:\\users\\mryla\\documents\\fbe\\cpsy200prototype\\cpsy200prototype\\components\\pages\\addcustomer.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|solutionrelative:components\\pages\\addcustomer.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|c:\\users\\mryla\\documents\\fbe\\cpsy200prototype\\cpsy200prototype\\components\\pages\\createrental.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|solutionrelative:components\\pages\\createrental.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|c:\\users\\mryla\\documents\\fbe\\cpsy200prototype\\cpsy200prototype\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|solutionrelative:components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -31,20 +43,8 @@
       "RelativeMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|solutionrelative:components\\pages\\reports.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|c:\\users\\mryla\\documents\\fbe\\cpsy200prototype\\cpsy200prototype\\components\\pages\\addequipment.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|solutionrelative:components\\pages\\addequipment.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|c:\\users\\mryla\\documents\\fbe\\cpsy200prototype\\cpsy200prototype\\components\\pages\\reports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|solutionrelative:components\\pages\\reports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|c:\\users\\mryla\\documents\\fbe\\cpsy200prototype\\cpsy200prototype\\components\\pages\\addcustomer.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|solutionrelative:components\\pages\\addcustomer.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|c:\\users\\mryla\\documents\\fbe\\cpsy200prototype\\cpsy200prototype\\components\\pages\\createrental.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|solutionrelative:components\\pages\\createrental.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9109B5D3-747E-4DE5-A33B-92502A17AF85}|cpsy200prototype.csproj|c:\\users\\mryla\\documents\\fbe\\cpsy200prototype\\cpsy200prototype\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -58,7 +58,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Bookmark",
@@ -73,12 +73,8 @@
               "Name": "ST:12:0:{fabf9319-47eb-497e-b8f6-d9f73fba5f55}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
               "Title": "Reports.razor.css",
               "DocumentMoniker": "C:\\Users\\mryla\\Documents\\FBE\\cpsy200prototype\\cpsy200prototype\\Components\\Pages\\Reports.razor.css",
               "RelativeDocumentMoniker": "Components\\Pages\\Reports.razor.css",
@@ -86,12 +82,11 @@
               "RelativeToolTip": "Components\\Pages\\Reports.razor.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-04-09T20:17:56.869Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-09T20:17:56.869Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "Home.Razor.css",
               "DocumentMoniker": "C:\\Users\\mryla\\Documents\\FBE\\cpsy200prototype\\cpsy200prototype\\Components\\Pages\\Home.Razor.css",
               "RelativeDocumentMoniker": "Components\\Pages\\Home.Razor.css",
@@ -99,12 +94,11 @@
               "RelativeToolTip": "Components\\Pages\\Home.Razor.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-04-09T20:17:51.738Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-09T20:17:51.738Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "CreateRental.razor.css",
               "DocumentMoniker": "C:\\Users\\mryla\\Documents\\FBE\\cpsy200prototype\\cpsy200prototype\\Components\\Pages\\CreateRental.razor.css",
               "RelativeDocumentMoniker": "Components\\Pages\\CreateRental.razor.css",
@@ -112,12 +106,11 @@
               "RelativeToolTip": "Components\\Pages\\CreateRental.razor.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-04-09T20:17:45.594Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-09T20:17:45.594Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "AddEquipment.razor.css",
               "DocumentMoniker": "C:\\Users\\mryla\\Documents\\FBE\\cpsy200prototype\\cpsy200prototype\\Components\\Pages\\AddEquipment.razor.css",
               "RelativeDocumentMoniker": "Components\\Pages\\AddEquipment.razor.css",
@@ -125,12 +118,11 @@
               "RelativeToolTip": "Components\\Pages\\AddEquipment.razor.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-04-09T20:17:39.766Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-09T20:17:39.766Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "AddCustomer.razor.css",
               "DocumentMoniker": "C:\\Users\\mryla\\Documents\\FBE\\cpsy200prototype\\cpsy200prototype\\Components\\Pages\\AddCustomer.razor.css",
               "RelativeDocumentMoniker": "Components\\Pages\\AddCustomer.razor.css",
@@ -138,12 +130,11 @@
               "RelativeToolTip": "Components\\Pages\\AddCustomer.razor.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-04-09T20:17:18.959Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-09T20:17:18.959Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "MainLayout.razor",
               "DocumentMoniker": "C:\\Users\\mryla\\Documents\\FBE\\cpsy200prototype\\cpsy200prototype\\Components\\Layout\\MainLayout.razor",
               "RelativeDocumentMoniker": "Components\\Layout\\MainLayout.razor",
@@ -151,8 +142,7 @@
               "RelativeToolTip": "Components\\Layout\\MainLayout.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-09T20:14:46.89Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-09T20:14:46.89Z"
             },
             {
               "$type": "Document",
@@ -169,7 +159,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 1,
               "Title": "AddEquipment.razor",
               "DocumentMoniker": "C:\\Users\\mryla\\Documents\\FBE\\cpsy200prototype\\cpsy200prototype\\Components\\Pages\\AddEquipment.razor",
               "RelativeDocumentMoniker": "Components\\Pages\\AddEquipment.razor",
@@ -182,7 +172,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "Reports.razor",
               "DocumentMoniker": "C:\\Users\\mryla\\Documents\\FBE\\cpsy200prototype\\cpsy200prototype\\Components\\Pages\\Reports.razor",
               "RelativeDocumentMoniker": "Components\\Pages\\Reports.razor",
@@ -190,12 +180,11 @@
               "RelativeToolTip": "Components\\Pages\\Reports.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-09T20:11:34.42Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-09T20:11:34.42Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 3,
               "Title": "CreateRental.razor",
               "DocumentMoniker": "C:\\Users\\mryla\\Documents\\FBE\\cpsy200prototype\\cpsy200prototype\\Components\\Pages\\CreateRental.razor",
               "RelativeDocumentMoniker": "Components\\Pages\\CreateRental.razor",
@@ -208,7 +197,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 2,
               "Title": "AddCustomer.razor",
               "DocumentMoniker": "C:\\Users\\mryla\\Documents\\FBE\\cpsy200prototype\\cpsy200prototype\\Components\\Pages\\AddCustomer.razor",
               "RelativeDocumentMoniker": "Components\\Pages\\AddCustomer.razor",
@@ -229,8 +218,7 @@
               "RelativeToolTip": "Components\\Pages\\Home.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-09T19:54:02.073Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-09T19:54:02.073Z"
             }
           ]
         }
