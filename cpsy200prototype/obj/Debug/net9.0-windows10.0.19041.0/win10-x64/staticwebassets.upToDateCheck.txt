@@ -1,8 +1,0 @@
-C:\Users\mryla\Documents\FBE\cpsy200prototype\cpsy200prototype\wwwroot\css\app.css
-C:\Users\mryla\Documents\FBE\cpsy200prototype\cpsy200prototype\wwwroot\css\bootstrap\bootstrap.min.css
-C:\Users\mryla\Documents\FBE\cpsy200prototype\cpsy200prototype\wwwroot\css\bootstrap\bootstrap.min.css.map
-C:\Users\mryla\Documents\FBE\cpsy200prototype\cpsy200prototype\wwwroot\index.html
-wwwroot\css\app.css
-wwwroot\css\bootstrap\bootstrap.min.css
-wwwroot\css\bootstrap\bootstrap.min.css.map
-wwwroot\index.html
