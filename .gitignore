@@ -1,0 +1,14 @@
+/cpsy200prototype/obj/Debug/net9.0-windows10.0.19041.0/win10-x64/compressed
+*.db-shm
+*.db-wal
+*.vsidx
+*.old
+/cpsy200prototype/bin/Debug/net9.0-windows10.0.19041.0/win10-x64/cpsy200prototype.exe.WebView2/EBWebView/Default/shared_proto_db
+/cpsy200prototype/bin/Debug/net9.0-windows10.0.19041.0/win10-x64/cpsy200prototype.exe.WebView2/EBWebView/Default/shared_proto_db
+/cpsy200prototype/bin/Debug/net9.0-windows10.0.19041.0/win10-x64/cpsy200prototype.exe.WebView2/EBWebView/Default
+/cpsy200prototype/bin/Debug/net9.0-windows10.0.19041.0/win10-x64/cpsy200prototype.exe.WebView2/EBWebView/Default/shared_proto_db
+/cpsy200prototype/bin/Debug/net9.0-windows10.0.19041.0/win10-x64/cpsy200prototype.exe.WebView2/EBWebView/Default
+/cpsy200prototype/bin/Debug/net9.0-windows10.0.19041.0/win10-x64/cpsy200prototype.exe.WebView2/EBWebView
+/cpsy200prototype/bin/Debug/net9.0-windows10.0.19041.0/win10-x64/cpsy200prototype.exe.WebView2
+*.gz
+*.br
