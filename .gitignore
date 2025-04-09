@@ -361,3 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/cpsy200prototype/.vs/cpsy200prototype/v17
+/cpsy200prototype/.vs/cpsy200prototype/v17
+/cpsy200prototype/.vs/cpsy200prototype
+/cpsy200prototype/bin/Debug/net9.0-windows10.0.19041.0/win10-x64/cpsy200prototype.exe.WebView2/EBWebView
+/cpsy200prototype/.vs
+*.json
+/cpsy200prototype/bin/Debug/net9.0-windows10.0.19041.0/win10-x64/cpsy200prototype.exe.WebView2/EBWebView
