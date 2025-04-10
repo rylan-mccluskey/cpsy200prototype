@@ -21,6 +21,11 @@
 }
 
 .navbar-brand {
+    background-color: #9c8e8f;
+    color: white;
+}
+
+.navbar-brand {
     font-size: 1.1rem;
 }
 
