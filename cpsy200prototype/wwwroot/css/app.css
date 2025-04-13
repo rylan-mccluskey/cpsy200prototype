@@ -9,7 +9,7 @@ a, .btn-link {
 
 .btn-primary {
     color: #fff;
-    background-color: #1b6ec2;
+    background-color: #9c8e8f;
     border-color: #1861ac;
 }
 
@@ -77,7 +77,7 @@ h1:focus {
         position: sticky;
         top: 0;
         height: env(safe-area-inset-top);
-        background-color: #f7f7f7;
+        background-color: #9c8e8f;
         width: 100%;
         z-index: 1;
     }
