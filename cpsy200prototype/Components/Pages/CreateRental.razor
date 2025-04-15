@@ -1,23 +1,184 @@
 ﻿@page "/createrental"
+@using NPOI.XSSF.UserModel
+@using NPOI.SS.UserModel
+@using System.IO
+
+@using static cpsy200prototype.Components.Pages.ManageClient
+@using static cpsy200prototype.Components.Pages.ManageEquipment
 
 <h3>Create Rental</h3>
 
-@code {
-        /*
-        * Create Rental
-        * This will process one of the items to a client.
-        *
-        * Each rental document has this information:
-        * - Rental ID
-        * - Current Date
-        * - Customer ID
-        * - Customer Last Name
-        *  For each item:
-        *  - Equipment ID
-        *  - Rental date
-        *  - Return date
-        *  - Cost of rental
-        * 
-        */
+<div>
+    <div>
+        <h4>Search Customer</h4>
+        <input type="text" @bind="searchCustomerId" placeholder="Customer ID" />
+        <button @onclick="SearchCustomer">Search</button>
+        @if (selectedCustomer != null)
+        {
+            <p>@($"Customer ID: {selectedCustomer.CustomerId} - {selectedCustomer.FirstName} {selectedCustomer.LastName}")</p>
+        }
+    </div>
+    <div>
+        <h4>Search Equipment</h4>
+        <input type="text" @bind="searchEquipmentId" placeholder="Equipment ID" />
+        <button @onclick="SearchEquipment">Search</button>
+        @if (selectedEquipment != null)
+        {
+            <p>@($"Equipment ID: {selectedEquipment.EquipmentId} - {selectedEquipment.EquipmentName} - {selectedEquipment.Category} - {selectedEquipment.Description} - {selectedEquipment.DailyRentalCost}")</p>
+        }
+    </div>
+    <div>
+        <h4>Rental Details</h4>
+        <label>Rental Date:</label>
+        <input type="date" @bind="rentalDate" />
+        <label>Return Date:</label>
+        <input type="date" @bind="returnDate" />
+        <button @onclick="AddRentalItem">Add Rental Item</button>
+    </div>
+    <div>
+        <h4>Rental Items</h4>
+        <ul>
+            @foreach (var item in rentalItems)
+            {
+                <li>@($"{item.Equipment.EquipmentId} - {item.Equipment.EquipmentName} - {item.RentalDate.ToShortDateString()} - {item.ReturnDate.ToShortDateString()} - {item.TotalCost:C}")</li>
+            }
+        </ul>
+        <p>Total Cost: @($"{totalCost:C}")</p>
+    </div>
+    <div>
+        <button @onclick="CreateRentals">Create Rentals</button>
+    </div>
+</div>
 
+@code {
+    public class RentalItem
+    {
+        public string EquipmentId { get; set; }
+        public Equipment Equipment { get; set; }
+        public DateTime RentalDate { get; set; }
+        public DateTime ReturnDate { get; set; }
+        public decimal TotalCost => (decimal)(ReturnDate - RentalDate).TotalDays * Equipment.DailyRentalCost;
+    }
+
+    private string searchCustomerId;
+    private Client selectedCustomer;
+    private string searchEquipmentId;
+    private Equipment selectedEquipment;
+    private DateTime rentalDate = DateTime.Today;
+    private DateTime returnDate = DateTime.Today.AddDays(1);
+    private List<RentalItem> rentalItems = new();
+    private decimal totalCost => rentalItems.Sum(r => r.TotalCost);
+
+    string directoryPath = @"C:\Users\mryla\Documents\FBE\cpsy200prototype\cpsy200prototype\Services";
+
+    private string filePath => Path.Combine(directoryPath, "data-samples.xlsx");
+
+    void SearchCustomer()
+    {
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        var wb = new XSSFWorkbook(fs);
+        var sheet = wb.GetSheet("Clients");
+
+        for  (int i = 0; i <= sheet.LastRowNum; i++)
+        {
+            var row = sheet.GetRow(i);
+            if (row?.GetCell(0)?.ToString() == searchCustomerId)
+            {
+                selectedCustomer = new Client
+                {
+                    CustomerId = row.GetCell(0)?.ToString(),
+                    LastName = row.GetCell(1)?.ToString(),
+                    FirstName = row.GetCell(2)?.ToString(),
+                };
+                break;
+            }
+        }
+    }
+
+    // Search Equipment has a hidden error where it doesnt show anything
+    void SearchEquipment()
+    {
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        var wb = new XSSFWorkbook(fs);
+
+        var sheet = wb.GetSheet("Equipment");
+        if (sheet == null) return;
+
+        for (int i = 0; i <= sheet.LastRowNum; i++)
+        {
+            var row = sheet.GetRow(i);
+            if (row == null) continue;
+
+            var equipmentIdCell = row.GetCell(7);
+            if (equipmentIdCell?.ToString() == searchEquipmentId)
+            {
+                selectedEquipment = new Equipment
+                    {
+                        EquipmentId = equipmentIdCell?.ToString(),
+                        EquipmentName = row.GetCell(8)?.ToString(),
+                        Category = row.GetCell(9)?.ToString(),
+                        Description = row.GetCell(10)?.ToString(),
+                        DailyRentalCost = decimal.TryParse(row.GetCell(11)?.ToString(), out var cost) ? cost : 0
+                    };
+                break;
+            }
+        }
+    }
+
+    void AddRentalItem()
+    {
+        if (selectedEquipment is null) return;
+
+        rentalItems.Add(new RentalItem
+        {
+            Equipment = selectedEquipment,
+            RentalDate = rentalDate,
+            ReturnDate = returnDate
+        });
+
+        selectedEquipment = null;
+        searchCustomerId = "";
+    }
+
+    void CreateRentals()
+    {
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        IWorkbook workbook;
+        ISheet sheet;
+
+        if (File.Exists(filePath))
+        {
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            workbook = new XSSFWorkbook(fs);
+            sheet = workbook.GetSheet("Rentals") ?? workbook.CreateSheet("Rentals");
+        }
+        else
+        {
+            workbook = new XSSFWorkbook();
+            sheet = workbook.CreateSheet("Rentals");
+        }
+
+        int rowIndex = Math.Max(13, sheet.LastRowNum + 1);
+
+        IRow row = sheet.CreateRow(rowIndex);
+        row.CreateCell(0).SetCellValue("Rental ID");
+        row.CreateCell(1).SetCellValue("Rental Date");
+        row.CreateCell(2).SetCellValue("Return Date");
+        row.CreateCell(3).SetCellValue("Customer ID");
+        row.CreateCell(4).SetCellValue("Customer Last Name");
+        row.CreateCell(5).SetCellValue("Customer First Name");
+        row.CreateCell(6).SetCellValue("Equipment ID");
+        row.CreateCell(7).SetCellValue("Equipment Name");
+        row.CreateCell(8).SetCellValue("Category");
+        row.CreateCell(9).SetCellValue("Description");
+        row.CreateCell(10).SetCellValue("Daily Rental Cost");
+        row.CreateCell(11).SetCellValue("Total Cost");
+
+        using var fsOut = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        workbook.Write(fsOut);
+    }
 }

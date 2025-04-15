@@ -1,28 +1,203 @@
 ﻿@page "/manageequipment"
+@using NPOI.XSSF.UserModel
+@using NPOI.SS.UserModel
+@using System.IO
 
 <h3>Manage Equipment</h3>
 
-<body>
+<div>
     <div>
+        <h4>Add Equipment</h4>
+        <input type="text" @bind="newEquipment.EquipmentId" placeholder="Equipment ID" />
+        <input type="text" @bind="newEquipment.EquipmentName" placeholder="Equipment Name" />
+        <input type="text" @bind="newEquipment.Category" placeholder="Category" />
+        <input type="text" @bind="newEquipment.Description" placeholder="Description" />
+        <input type="number" @bind="newEquipment.DailyRentalCost" placeholder="Daily Rental Cost" />
+        <button @onclick="() => AddEquipment(newEquipment)">Add Equipment</button>
     </div>
-</body>
+    <div>
+        <h4>Update Equipment</h4>
+        <input type="text" @bind="updateEquipmentId" placeholder="Equipment ID" />
+        <input type="text" @bind="updateEquipmentName" placeholder="Equipment Name" />
+        <input type="text" @bind="updateCategory" placeholder="Category" />
+        <input type="text" @bind="updateDescription" placeholder="Description" />
+        <input type="number" @bind="updateDailyRentalCost" placeholder="Daily Rental Cost" />
+        <button @onclick="UpdateEquipment">Update Equipment</button>
+    </div>
+    <div>
+        <h4>Delete Equipment</h4>
+        <input type="text" @bind="updateEquipmentId" placeholder="Equipment ID" />
+        <button @onclick="() => DeleteEquipment(updateEquipmentId)">Delete Equipment</button>
+    </div>
+    <div>
+        <h4>Display Equipment</h4>
+        <ul>
+            @foreach (var e in equipments)
+            {
+                <li>@($"{e.EquipmentId} - {e.EquipmentName} - {e.Category} - {e.Description} - {e.DailyRentalCost}")</li>
+            }
+        </ul>
+        <button @onclick="DisplayEquipment">Show Equipment</button>
+    </div>
+</div>
 
 @code {
-    /*
-     *  Each equipment has the following properties:
-     * - Equipment ID
-     * - Equipment Name
-     * - Category
-     * - Description
-     * - Daily Rental Cost
-     */
+    public class Equipment
+    {
+        public string EquipmentId { get; set; }
+        public string EquipmentName { get; set; }
+        public string Category { get; set; }
+        public string Description { get; set; }
+        public decimal DailyRentalCost { get; set; }
+    }
 
-    // add equipment method that connects to a samples.xlsx file.
+    string directoryPath = @"C:\Users\mryla\Documents\FBE\cpsy200prototype\cpsy200prototype\Services";
 
-    // delete equipment method here that connects to a samples.xlsx file.
+    string filePath => Path.Combine(directoryPath, "data-samples.xlsx");
+    private List<Equipment> equipments = new();
 
-    // update equipment method here that connects to a samples.xlsx file.
+    private Equipment newEquipment = new Equipment();
+    private string updateEquipmentId;
+    private string updateEquipmentName;
+    private string updateCategory;
+    private string updateDescription;
+    private static decimal updateDailyRentalCost;
 
-    // display equipment method here that connects to a samples.xlsx file.
+    private void AddEquipment(Equipment equipment)
+    {
+        if (string.IsNullOrWhiteSpace(newEquipment.EquipmentId)) return;
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+        IWorkbook workbook;
+        ISheet sheet;
+
+        if (File.Exists(filePath))
+        {
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            workbook = new XSSFWorkbook(fs);
+            sheet = workbook.GetSheetAt(0);
+        }
+        else
+        {
+            workbook = new XSSFWorkbook();
+            sheet = workbook.CreateSheet("Equipment");
+        }
+
+        int rowCount = sheet.LastRowNum < 5 ? 5 : sheet.LastRowNum + 1;
+        IRow row = sheet.CreateRow(rowCount);
+        row.CreateCell(7).SetCellValue(newEquipment.EquipmentId);
+        row.CreateCell(8).SetCellValue(newEquipment.EquipmentName);
+        row.CreateCell(9).SetCellValue(newEquipment.Category);
+        row.CreateCell(10).SetCellValue(newEquipment.Description);
+        row.CreateCell(11).SetCellValue((double)newEquipment.DailyRentalCost);
+
+        using (var fsOut = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            workbook.Write(fsOut);
+
+        newEquipment = new();
+
+    }
+
+    private void DeleteEquipment(string equipmentId)
+    {
+        if (string.IsNullOrWhiteSpace(equipmentId)) return;
+
+        IWorkbook workbook;
+        ISheet sheet;
+
+        using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        {
+            workbook = new XSSFWorkbook(fs);
+            sheet = workbook.GetSheetAt(0);
+        }
+
+        for (int i = 5; i <= sheet.LastRowNum; i++)
+        {
+            IRow row = sheet.GetRow(i);
+            if (row == null) continue;
+
+            string existingId = row.GetCell(7)?.ToString();
+            if (existingId == equipmentId)
+            {
+                sheet.RemoveRow(row);
+
+                if (i < sheet.LastRowNum)
+                {
+                    sheet.ShiftRows(i + 1, sheet.LastRowNum, -1);
+                }
+
+                break;
+            }
+        }
+
+        using var fsOut = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        workbook.Write(fsOut);
+
+    }
+
+    private void UpdateEquipment()
+    {
+        if (!File.Exists(filePath)) return;
+
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        IWorkbook workbook = new XSSFWorkbook(fs);
+        ISheet sheet = workbook.GetSheetAt(0);
+
+        for (int i = 5; i <= sheet.LastRowNum; i++)
+        {
+            IRow row = sheet.GetRow(i);
+            if (row == null) continue;
+
+            string existingId = row.GetCell(7)?.ToString();
+            if (existingId == updateEquipmentId)
+            {
+                if (!string.IsNullOrWhiteSpace(updateEquipmentName))
+                    row.GetCell(8).SetCellValue(updateEquipmentName);
+                if (!string.IsNullOrWhiteSpace(updateCategory))
+                    row.GetCell(9).SetCellValue(updateCategory);
+                if (!string.IsNullOrWhiteSpace(updateDescription))
+                    row.GetCell(10).SetCellValue(updateDescription);
+                if (updateDailyRentalCost > 0)
+                    row.GetCell(11).SetCellValue((double)updateDailyRentalCost);
+                break;
+            }
+        }
+
+        using var fsOut = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        workbook.Write(fsOut);
+
+        updateEquipmentId = updateEquipmentName = updateCategory = updateDescription = "";
+        updateDailyRentalCost = 0;
+    }
+
+    private void DisplayEquipment()
+    {
+        equipments.Clear();
+        if (!File.Exists(filePath)) return;
+
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        IWorkbook workbook = new XSSFWorkbook(fs);
+        ISheet sheet = workbook.GetSheetAt(0);
+
+        for (int i = 5; i <= sheet.LastRowNum; i++)
+        {
+            IRow row = sheet.GetRow(i);
+            if (row == null || row.GetCell(7) == null) continue;
+
+            var equipment = new Equipment
+            {
+                    EquipmentId = row.GetCell(7).ToString(),
+                    EquipmentName = row.GetCell(8).ToString(),
+                    Category = row.GetCell(9).ToString(),
+                    Description = row.GetCell(10).ToString(),
+                    DailyRentalCost = (decimal)(row.GetCell(11)?.NumericCellValue ?? 0)
+
+            };
+            equipments.Add(equipment);
+        }
+    }
 }
 
