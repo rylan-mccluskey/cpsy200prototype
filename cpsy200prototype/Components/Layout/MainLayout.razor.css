@@ -3,6 +3,7 @@
     display: flex;
     flex-direction: column;
     background-color: #1e1e2f;
+    color: #bdb1b1;
 }
 
 main {
@@ -33,7 +34,6 @@ main {
         white-space: nowrap;
         margin-left: 1.5rem;
         text-decoration: none;
-        color: #e0e0e0;
     }
 
         .top-row ::deep a:hover,

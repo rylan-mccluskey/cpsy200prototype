@@ -3,7 +3,7 @@
     cursor: pointer;
     width: 3.5rem;
     height: 2.5rem;
-    color: white;
+    color: #bdb1b1;
     position: absolute;
     top: 0.5rem;
     right: 1rem;
@@ -60,7 +60,7 @@
     }
 
     .nav-item ::deep a {
-        color: #d7d7d7;
+        color: #bdb1b1;
         border-radius: 4px;
         height: 3rem;
         display: flex;
@@ -92,9 +92,7 @@
     }
 
     .nav-scrollable {
-        /* Never collapse the sidebar for wide screens */
         display: block;
-        /* Allow sidebar to scroll for tall menus */
         height: calc(100vh - 3.5rem);
         overflow-y: auto;
     }
