@@ -2,23 +2,150 @@
 
 <h3>Manage Customers</h3>
 
+<div>
+    <div class="AddClients">
+        <div>
+            <h4>Add Client</h4>
+        </div>
+        <div>
+            <input type="text" @bind="newClient.CustomerId" placeholder="Customer ID" />
+            <input type="text" @bind="newClient.LastName" placeholder="Last Name" />
+            <input type="text" @bind="newClient.FirstName" placeholder="First Name" />
+            <input type="text" @bind="newClient.Phone" placeholder="Contact Phone" />
+            <input type="text" @bind="newClient.Email" placeholder="Email" />
+            <button @onclick="() => AddClient(newClient)">Add Client</button>
+        </div>
+    </div>
+
+    <div class="UpdateClient">
+        <div>
+            <button @onclick="UpdateClient">Update Client</button>
+        </div>
+    </div>
+
+    <div class="BanClients">
+        <div>
+            <button @onclick="BanClient">Ban Client</button>
+        </div>
+    </div>
+
+    <div class="DisplayClient">
+        <div>
+            <button @onclick="DisplayClients">Show Clients</button>
+        </div>
+
+        <div>
+            <ul>
+                @foreach (var c in clients)
+                {
+                    <li>@($"{c.CustomerId} - {c.FirstName} {c.LastName} - {c.Phone} - {c.Email} - {c.Status}")</li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
 @code {
-        /*
-        * Each client has the following properties:
-        * 
-        * - Customer ID
-        * - Last Name
-        * - First Name
-        * - Contact Phone
-        * - Email
-        * 
-        */
+    /*
+    * Each client has the following properties:
+    *
+    * - Customer ID
+    * - Last Name
+    * - First Name
+    * - Contact Phone
+    * - Email
+    *
+    */
 
-        // add client method that connects to a samples.xlsx file.
+    public class Client
+    {
+        public string CustomerId { get; set; }
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public string Status { get; set; } = "Active";
+    }
 
-        // ban client method here that connects to a samples.xlsx file.
+    private string filePath = "Services/data-samples.xlsx";
+    private List<Client> clients = new();
 
-        // update client method here that connects to a samples.xlsx file.
+    private Client newClient = new();
+    private string updateCustomerId;
+    private string updatePhone;
+    private string updateEmail;
+    private string banCustomerId;
 
-        // display client method here that connects to a samples.xlsx file.
+    // add client method that connects to a samples.xlsx file.
+
+    void AddClient(Client client)
+    {
+        if (string.IsNullOrWhiteSpace(newClient.CustomerId)) return;
+
+        var line = $"{client.CustomerId},{client.LastName},{client.FirstName},{client.Phone},{client.Email},{client.Status}";
+        File.AppendAllLines(filePath, new[] { line });
+        newClient = new();
+    }
+
+    // ban client method here that connects to a samples.xlsx file.
+
+    void BanClient()
+    {
+        var allLines = File.ReadAllLines(filePath).ToList();
+        for (int i = 1; i < allLines.Count; i++)
+        {
+            var parts = allLines[i].Split(',');
+            if (parts[0] == banCustomerId)
+            {
+                parts[5] = "Banned";
+                allLines[i] = string.Join(",", parts);
+                break;
+            }
+        }
+        File.WriteAllLines(filePath, allLines);
+        banCustomerId = "";
+    }
+
+    // update client method here that connects to a samples.xlsx file.
+
+    void UpdateClient()
+    {
+        var allLines = File.ReadAllLines(filePath).ToList();
+        for (int i = 1; i < allLines.Count; i++)
+        {
+            var parts = allLines[i].Split(',');
+            if (parts[0] == updateCustomerId)
+            {
+                if (!string.IsNullOrWhiteSpace(updatePhone)) parts[3] = updatePhone;
+                if (!string.IsNullOrWhiteSpace(updateEmail)) parts[4] = updateEmail;
+                allLines[i] = string.Join(",", parts);
+                break;
+            }
+        }
+        File.WriteAllLines(filePath, allLines);
+        updateCustomerId = updatePhone = updateEmail = "";
+    }
+
+    // display client method here that connects to a samples.xlsx file.
+
+    void DisplayClients()
+    {
+        clients.Clear();
+        if (!File.Exists(filePath)) return;
+
+        var lines = File.ReadAllLines(filePath).Skip(1);
+        foreach (var line in lines)
+        {
+            var parts = line.Split(',');
+            clients.Add(new Client
+            {
+                CustomerId = parts[0],
+                LastName = parts[1],
+                FirstName = parts[2],
+                Phone = parts[3],
+                Email = parts[4],
+                Status = parts[5]
+            });
+        }
+    }
 }

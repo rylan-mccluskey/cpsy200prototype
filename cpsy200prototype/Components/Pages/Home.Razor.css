@@ -1,4 +1,13 @@
-h3 {
+.Home {
+    margin-bottom: 10px;
+}
+
+.Title {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.Paragraph {
     text-align: center;
     margin-top: 10px;
 }
