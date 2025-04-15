@@ -1,4 +1,7 @@
 ﻿@page "/managecustomer"
+@using NPOI.XSSF.UserModel
+@using NPOI.SS.UserModel
+@using System.IO
 
 <h3>Manage Customers</h3>
 
@@ -46,17 +49,7 @@
 </div>
 
 @code {
-    /*
-    * Each client has the following properties:
-    *
-    * - Customer ID
-    * - Last Name
-    * - First Name
-    * - Contact Phone
-    * - Email
-    *
-    */
-
+    //after so many years it been done, all i need to do is make the directory for this service folder
     public class Client
     {
         public string CustomerId { get; set; }
@@ -67,7 +60,9 @@
         public string Status { get; set; } = "Active";
     }
 
-    private string filePath = "Services/data-samples.xlsx";
+    string directoryPath = @"C:\Users\mryla\Documents\FBE\cpsy200prototype\cpsy200prototype\Services";
+
+    string filePath => Path.Combine(directoryPath, "data-samples.xlsx");
     private List<Client> clients = new();
 
     private Client newClient = new();
@@ -76,76 +71,134 @@
     private string updateEmail;
     private string banCustomerId;
 
-    // add client method that connects to a samples.xlsx file.
-
     void AddClient(Client client)
     {
         if (string.IsNullOrWhiteSpace(newClient.CustomerId)) return;
 
-        var line = $"{client.CustomerId},{client.LastName},{client.FirstName},{client.Phone},{client.Email},{client.Status}";
-        File.AppendAllLines(filePath, new[] { line });
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        IWorkbook workbook;
+        ISheet sheet;
+
+        if (File.Exists(filePath))
+        {
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            workbook = new XSSFWorkbook(fs);
+        }
+        else
+        {
+            workbook = new XSSFWorkbook();
+        }
+
+        sheet = workbook.NumberOfSheets > 0 ? workbook.GetSheetAt(0) : workbook.CreateSheet("Clients");
+
+        int lastRow = sheet.LastRowNum;
+        IRow row = sheet.CreateRow(lastRow + 1);
+
+        row.CreateCell(0).SetCellValue(client.CustomerId);
+        row.CreateCell(1).SetCellValue(client.LastName);
+        row.CreateCell(2).SetCellValue(client.FirstName);
+        row.CreateCell(3).SetCellValue(client.Phone);
+        row.CreateCell(4).SetCellValue(client.Email);
+        row.CreateCell(5).SetCellValue(client.Status);
+
+        using var fsOut = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        workbook.Write(fsOut);
+
         newClient = new();
     }
 
-    // ban client method here that connects to a samples.xlsx file.
-
     void BanClient()
     {
-        var allLines = File.ReadAllLines(filePath).ToList();
-        for (int i = 1; i < allLines.Count; i++)
+        if (!File.Exists(filePath) || string.IsNullOrWhiteSpace(banCustomerId)) return;
+
+        if (!Directory.Exists(directoryPath))
         {
-            var parts = allLines[i].Split(',');
-            if (parts[0] == banCustomerId)
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite);
+        var workbook = new XSSFWorkbook(fs);
+        var sheet = workbook.GetSheetAt(0);
+
+        for (int i = 0; i <= sheet.LastRowNum; i++)
+        {
+            var row = sheet.GetRow(i);
+            if (row != null && row.GetCell(0)?.ToString() == banCustomerId)
             {
-                parts[5] = "Banned";
-                allLines[i] = string.Join(",", parts);
+                row.GetCell(5).SetCellValue("Banned");
                 break;
             }
         }
-        File.WriteAllLines(filePath, allLines);
+        using var outFile = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        workbook.Write(outFile);
+
         banCustomerId = "";
     }
 
-    // update client method here that connects to a samples.xlsx file.
-
     void UpdateClient()
     {
-        var allLines = File.ReadAllLines(filePath).ToList();
-        for (int i = 1; i < allLines.Count; i++)
+        if (!File.Exists(filePath) || string.IsNullOrWhiteSpace(updateCustomerId)) return;
+
+        if (!Directory.Exists(directoryPath))
         {
-            var parts = allLines[i].Split(',');
-            if (parts[0] == updateCustomerId)
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite);
+        var workbook = new XSSFWorkbook(fs);
+        var sheet = workbook.GetSheetAt(0);
+
+        for (int i = 0; i<= sheet.LastRowNum; i++)
+        {
+            var row = sheet.GetRow(i);
+            if (row != null && row.GetCell(0)?.ToString() == updateCustomerId)
             {
-                if (!string.IsNullOrWhiteSpace(updatePhone)) parts[3] = updatePhone;
-                if (!string.IsNullOrWhiteSpace(updateEmail)) parts[4] = updateEmail;
-                allLines[i] = string.Join(",", parts);
+                if (!string.IsNullOrWhiteSpace(updatePhone)) row.GetCell(3).SetCellValue(updatePhone);
+                if (!string.IsNullOrWhiteSpace(updateEmail)) row.GetCell(4).SetCellValue(updateEmail);
                 break;
             }
         }
-        File.WriteAllLines(filePath, allLines);
-        updateCustomerId = updatePhone = updateEmail = "";
-    }
 
-    // display client method here that connects to a samples.xlsx file.
+        using var outFile = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        workbook.Write(outFile);
+
+        updateCustomerId = updatePhone = updateEmail = "";
+
+    }
 
     void DisplayClients()
     {
         clients.Clear();
         if (!File.Exists(filePath)) return;
 
-        var lines = File.ReadAllLines(filePath).Skip(1);
-        foreach (var line in lines)
+        if (!Directory.Exists(directoryPath))
         {
-            var parts = line.Split(',');
-            clients.Add(new Client
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        var workbook = new XSSFWorkbook(fs);
+        var sheet = workbook.GetSheetAt(0);
+
+        for (int i = 0; i <= sheet.LastRowNum; i++)
+        {
+            var row = sheet.GetRow(i);
+            if (row != null)
             {
-                CustomerId = parts[0],
-                LastName = parts[1],
-                FirstName = parts[2],
-                Phone = parts[3],
-                Email = parts[4],
-                Status = parts[5]
-            });
+                clients.Add(new Client
+                    {
+                        CustomerId = row.GetCell(0)?.ToString(),
+                        LastName = row.GetCell(1)?.ToString(),
+                        FirstName = row.GetCell(2)?.ToString(),
+                        Phone = row.GetCell(3)?.ToString(),
+                        Email = row.GetCell(4)?.ToString(),
+                        Status = row.GetCell(5)?.ToString()
+                    });
+            }
         }
     }
 }
