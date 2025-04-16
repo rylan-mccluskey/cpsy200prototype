@@ -1,9 +1,9 @@
-﻿@page "/managecustomer"
+﻿@page "/manageClient"
 @using NPOI.XSSF.UserModel
 @using NPOI.SS.UserModel
 @using System.IO
 
-<h3>Manage Customers</h3>
+<h3>Manage Clients</h3>
 
 <div>
     <div class="AddClients">
@@ -11,7 +11,7 @@
             <h4>Add Client</h4>
         </div>
         <div>
-            <input type="text" @bind="newClient.CustomerId" placeholder="Customer ID" />
+            <input type="text" @bind="newClient.ClientId" placeholder="Client ID" />
             <input type="text" @bind="newClient.LastName" placeholder="Last Name" />
             <input type="text" @bind="newClient.FirstName" placeholder="First Name" />
             <input type="text" @bind="newClient.Phone" placeholder="Contact Phone" />
@@ -25,7 +25,7 @@
             <h4>Update Client</h4>
         </div>
         <div>
-            <input type="text" @bind="updateCustomerId" placeholder="Customer ID" />
+            <input type="text" @bind="updateClientId" placeholder="Client ID" />
             <input type="text" @bind="updatePhone" placeholder="Contact Phone" />
             <input type="text" @bind="updateEmail" placeholder="Email" />
             <button @onclick="() => UpdateClient()">Update Client</button>
@@ -37,7 +37,7 @@
             <h4>Ban Client</h4>
         </div>
         <div>
-            <input type="text" @bind="banCustomerId" placeholder="Customer ID" />
+            <input type="text" @bind="banClientId" placeholder="Client ID" />
             <button @onclick="BanClient">Ban Client</button>
         </div>
     </div>
@@ -51,7 +51,7 @@
             <ul>
                 @foreach (var c in clients)
                 {
-                    <li>@($"{c.CustomerId} - {c.FirstName} {c.LastName} - {c.Phone} - {c.Email} - {c.Status}")</li>
+                    <li>@($"{c.ClientId} - {c.FirstName} {c.LastName} - {c.Phone} - {c.Email} - {c.Status}")</li>
                 }
             </ul>
         </div>
@@ -61,7 +61,7 @@
 @code {
     public class Client
     {
-        public string CustomerId { get; set; }
+        public string ClientId { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string Phone { get; set; }
@@ -75,14 +75,14 @@
     private List<Client> clients = new();
 
     private Client newClient = new();
-    private string updateCustomerId;
+    private string updateClientId;
     private string updatePhone;
     private string updateEmail;
-    private string banCustomerId;
+    private string banClientId;
 
     void AddClient(Client client)
     {
-        if (string.IsNullOrWhiteSpace(newClient.CustomerId)) return;
+        if (string.IsNullOrWhiteSpace(newClient.ClientId)) return;
 
         if (!Directory.Exists(directoryPath))
         {
@@ -107,7 +107,7 @@
         int lastRow = sheet.LastRowNum;
         IRow row = sheet.CreateRow(lastRow + 1);
 
-        row.CreateCell(0).SetCellValue(client.CustomerId);
+        row.CreateCell(0).SetCellValue(client.ClientId);
         row.CreateCell(1).SetCellValue(client.LastName);
         row.CreateCell(2).SetCellValue(client.FirstName);
         row.CreateCell(3).SetCellValue(client.Phone);
@@ -122,7 +122,7 @@
 
     void BanClient()
     {
-        if (!File.Exists(filePath) || string.IsNullOrWhiteSpace(banCustomerId)) return;
+        if (!File.Exists(filePath) || string.IsNullOrWhiteSpace(banClientId)) return;
 
         if (!Directory.Exists(directoryPath))
         {
@@ -136,7 +136,7 @@
         for (int i = 0; i <= sheet.LastRowNum; i++)
         {
             var row = sheet.GetRow(i);
-            if (row != null && row.GetCell(0)?.ToString() == banCustomerId)
+            if (row != null && row.GetCell(0)?.ToString() == banClientId)
             {
                 row.GetCell(5).SetCellValue("Banned");
                 break;
@@ -145,12 +145,12 @@
         using var outFile = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         workbook.Write(outFile);
 
-        banCustomerId = "";
+        banClientId = "";
     }
 
     void UpdateClient()
     {
-        if (!File.Exists(filePath) || string.IsNullOrWhiteSpace(updateCustomerId)) return;
+        if (!File.Exists(filePath) || string.IsNullOrWhiteSpace(updateClientId)) return;
 
         if (!Directory.Exists(directoryPath))
         {
@@ -164,7 +164,7 @@
         for (int i = 0; i<= sheet.LastRowNum; i++)
         {
             var row = sheet.GetRow(i);
-            if (row != null && row.GetCell(0)?.ToString() == updateCustomerId)
+            if (row != null && row.GetCell(0)?.ToString() == updateClientId)
             {
                 if (!string.IsNullOrWhiteSpace(updatePhone)) row.GetCell(3).SetCellValue(updatePhone);
                 if (!string.IsNullOrWhiteSpace(updateEmail)) row.GetCell(4).SetCellValue(updateEmail);
@@ -175,7 +175,7 @@
         using var outFile = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         workbook.Write(outFile);
 
-        updateCustomerId = updatePhone = updateEmail = "";
+        updateClientId = updatePhone = updateEmail = "";
 
     }
 
@@ -196,13 +196,13 @@
         for (int i = 0; i <= sheet.LastRowNum; i++)
         {
             var row = sheet.GetRow(i);
-            var customerId = row?.GetCell(0)?.ToString();
+            var ClientId = row?.GetCell(0)?.ToString();
 
-            if (!string.IsNullOrWhiteSpace(customerId))
+            if (!string.IsNullOrWhiteSpace(ClientId))
             {
                 clients.Add(new Client
                     {
-                        CustomerId = row.GetCell(0)?.ToString(),
+                        ClientId = row.GetCell(0)?.ToString(),
                         LastName = row.GetCell(1)?.ToString(),
                         FirstName = row.GetCell(2)?.ToString(),
                         Phone = row.GetCell(3)?.ToString(),

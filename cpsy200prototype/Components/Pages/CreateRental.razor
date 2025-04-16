@@ -7,36 +7,38 @@
 @using static cpsy200prototype.Components.Pages.ManageEquipment
 
 <h3>Create Rental</h3>
+<br />
+<br />
 
 <div>
-    <div>
-        <h4>Search Customer</h4>
-        <input type="text" @bind="searchCustomerId" placeholder="Customer ID" />
-        <button @onclick="SearchCustomer">Search</button>
+    <div class="SearchClient">
+        <h4>Search Client</h4>
+        <input type="text" @bind="searchClientId" placeholder="Client ID" />
+        <button @onclick="SearchClient">Search</button>
+        <div class="SelectedClient">
+            <h4>Selected Client</h4>
+            @if (selectedClient != null)
+            {
+                <p>@($"{selectedClient.ClientId} - {selectedClient.LastName} - {selectedClient.FirstName}")</p>
+            }
+        </div>
     </div>
-    <div>
-        <h4>Selected Customer</h4>
-        @if (selectedCustomer != null)
-        {
-            <p>@($"{selectedCustomer.CustomerId} - {selectedCustomer.LastName} - {selectedCustomer.FirstName}")</p>
-        }
-    </div>
-    <div>
+    <div class="SearchEquipment">
         <h4>Search Equipment</h4>
         <input type="text" @bind="searchEquipmentId" placeholder="Equipment ID" />
         <button @onclick="SearchEquipment">Search</button>
+        <div class="SelectedEquipment">
+            <h4>Selected Equipment</h4>
+            @if (selectedEquipment != null)
+            {
+                <p>@($"{selectedEquipment.EquipmentId} - {selectedEquipment.EquipmentName} - {selectedEquipment.Category} - {selectedEquipment.Description} - {selectedEquipment.DailyRentalCost}")</p>
+                <input type="date" @bind="rentalDate" />
+                <input type="date" @bind="returnDate" />
+                <button @onclick="AddRentalItem">Add Rental Item</button>
+            }
+        </div>
     </div>
-    <div>
-        <h4>Selected Equipment</h4>
-        @if (selectedEquipment != null)
-        {
-            <p>@($"{selectedEquipment.EquipmentId} - {selectedEquipment.EquipmentName} - {selectedEquipment.Category} - {selectedEquipment.Description} - {selectedEquipment.DailyRentalCost}")</p>
-            <input type="date" @bind="rentalDate" />
-            <input type="date" @bind="returnDate" />
-            <button @onclick="AddRentalItem">Add Rental Item</button>
-        }
-    </div>
-    <div>
+    <div class="RentalItems">
         <h4>Rental Items</h4>
         <ul>
             @foreach (var item in rentalItems)
@@ -50,19 +52,19 @@
         <p>Total Cost: @totalCost</p>
         <button @onclick="CreateRentals">Create Rentals</button>
     </div>
-    <div>
+    <div class="DisplayRentals">
         <h4>Display Rentals</h4>
         <button @onclick="DisplayRentals">Show Rentals</button>
         <ul>
             @if (rentals.Count > 0)
             {
-                @foreach (var group in rentals.GroupBy(r => new { r.RentalId, r.CustomerId }))
+                @foreach (var group in rentals.GroupBy(r => new { r.RentalId, r.ClientId }))
                 {
                     var totalGroupCost = group.Sum(r => r.Cost);
                     var sample = group.First();
 
                     <li>
-                        <strong>@($"{sample.CustomerFirstName} {sample.CustomerLastName} - {sample.RentalId}")</strong><br />
+                        <strong>@($"{sample.ClientFirstName} {sample.ClientLastName} - {sample.RentalId}")</strong><br />
                         <ul>
                             @foreach (var rental in group)
                             {
@@ -98,9 +100,9 @@
         public string RentalId { get; set; }
         public DateTime RentalDate { get; set; }
         public DateTime ReturnDate { get; set; }
-        public string CustomerId { get; set; }
-        public string CustomerLastName { get; set; }
-        public string CustomerFirstName { get; set; }
+        public string ClientId { get; set; }
+        public string ClientLastName { get; set; }
+        public string ClientFirstName { get; set; }
         public string EquipmentId { get; set; }
         public string EquipmentName { get; set; }
         public string Category { get; set; }
@@ -111,8 +113,8 @@
 
     private List<Rental> rentals = new();
 
-    private string searchCustomerId;
-    private Client selectedCustomer;
+    private string searchClientId;
+    private Client selectedClient;
     private string searchEquipmentId;
     private Equipment selectedEquipment;
     private DateTime rentalDate = DateTime.Today;
@@ -124,7 +126,7 @@
 
     private string filePath => Path.Combine(directoryPath, "data-samples.xlsx");
 
-    void SearchCustomer()
+    void SearchClient()
     {
         using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
         var wb = new XSSFWorkbook(fs);
@@ -133,11 +135,11 @@
         for  (int i = 0; i <= sheet.LastRowNum; i++)
         {
             var row = sheet.GetRow(i);
-            if (row?.GetCell(0)?.ToString() == searchCustomerId)
+            if (row?.GetCell(0)?.ToString() == searchClientId)
             {
-                selectedCustomer = new Client
+                selectedClient = new Client
                 {
-                    CustomerId = row.GetCell(0)?.ToString(),
+                    ClientId = row.GetCell(0)?.ToString(),
                     LastName = row.GetCell(1)?.ToString(),
                     FirstName = row.GetCell(2)?.ToString(),
                 };
@@ -177,7 +179,7 @@
 
     void AddRentalItem()
     {
-        if (selectedEquipment is null || selectedCustomer is null) return;
+        if (selectedEquipment is null || selectedClient is null) return;
 
         rentalItems.Add(new RentalItem
             {
@@ -192,7 +194,7 @@
 
     void CreateRentals()
     {
-        if (selectedCustomer == null || rentalItems.Count == 0) return;
+        if (selectedClient == null || rentalItems.Count == 0) return;
 
         if (!Directory.Exists(directoryPath))
         {
@@ -223,9 +225,9 @@
             row.CreateCell(0).SetCellValue(rentalId);
             row.CreateCell(1).SetCellValue(item.RentalDate.ToShortDateString());
             row.CreateCell(2).SetCellValue(item.ReturnDate.ToShortDateString());
-            row.CreateCell(3).SetCellValue(selectedCustomer.CustomerId);
-            row.CreateCell(4).SetCellValue(selectedCustomer.LastName);
-            row.CreateCell(5).SetCellValue(selectedCustomer.FirstName);
+            row.CreateCell(3).SetCellValue(selectedClient.ClientId);
+            row.CreateCell(4).SetCellValue(selectedClient.LastName);
+            row.CreateCell(5).SetCellValue(selectedClient.FirstName);
             row.CreateCell(6).SetCellValue(item.Equipment.EquipmentId);
             row.CreateCell(7).SetCellValue(item.Equipment.EquipmentName);
             row.CreateCell(8).SetCellValue(item.Equipment.Category);
@@ -267,9 +269,9 @@
                     RentalDate = DateTime.TryParse(row.GetCell(1)?.ToString(), out var rDate) ? rDate : DateTime.MinValue,
                     ReturnDate = DateTime.TryParse(row.GetCell(2)?.ToString(), out var retDate) ? retDate : DateTime.MinValue,
 
-                    CustomerId = row.GetCell(3)?.ToString(),
-                    CustomerLastName = row.GetCell(4)?.ToString(),
-                    CustomerFirstName = row.GetCell(5)?.ToString(),
+                    ClientId = row.GetCell(3)?.ToString(),
+                    ClientLastName = row.GetCell(4)?.ToString(),
+                    ClientFirstName = row.GetCell(5)?.ToString(),
                     EquipmentId = row.GetCell(6)?.ToString(),
                     EquipmentName = row.GetCell(7)?.ToString(),
                     Category = row.GetCell(8)?.ToString(),
