@@ -84,6 +84,7 @@
     private string updateEmail;
     private string banClientId;
 
+    // Adds Client
     void AddClient(Client client)
     {
         if (string.IsNullOrWhiteSpace(newClient.ClientId)) return;
@@ -124,6 +125,7 @@
         newClient = new();
     }
 
+    // Able to Ban Client, though its usefulness isnt very useful
     void BanClient()
     {
         if (!File.Exists(filePath) || string.IsNullOrWhiteSpace(banClientId)) return;
@@ -152,6 +154,7 @@
         banClientId = "";
     }
 
+    // Update Client Information
     void UpdateClient()
     {
         if (!File.Exists(filePath) || string.IsNullOrWhiteSpace(updateClientId)) return;
@@ -183,6 +186,7 @@
 
     }
 
+    // Display all Clients
     void DisplayClients()
     {
         clients.Clear();

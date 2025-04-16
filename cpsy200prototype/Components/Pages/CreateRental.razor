@@ -131,6 +131,7 @@
 
     private string filePath => Path.Combine(directoryPath, "data-samples.xlsx");
 
+    // Searches client by ClientId
     void SearchClient()
     {
         using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
@@ -153,6 +154,7 @@
         }
     }
 
+    // Searches equipment by equipmentId
     void SearchEquipment()
     {
         using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
@@ -182,6 +184,7 @@
         }
     }
 
+    // Adds the selected equipment items
     void AddRentalItem()
     {
         if (selectedEquipment is null || selectedClient is null) return;
@@ -197,6 +200,7 @@
         searchEquipmentId = "";
     }
 
+    // Creates a rental with a client and equipment items
     void CreateRentals()
     {
         if (selectedClient == null || rentalItems.Count == 0) return;
@@ -247,6 +251,7 @@
         rentalItems.Clear();
     }
 
+    // Displays rentals that have been created
     void DisplayRentals()
     {
         rentals.Clear();
@@ -290,6 +295,7 @@
         }
     }
 
+    // Removes a rental item before creating the rental
     void RemoveItem(RentalItem item)
     {
         rentalItems.Remove(item);

@@ -65,6 +65,7 @@
     private string updateDescription;
     private static decimal updateDailyRentalCost;
 
+    // Add equipment
     private void AddEquipment(Equipment equipment)
     {
         if (string.IsNullOrWhiteSpace(newEquipment.EquipmentId)) return;
@@ -101,6 +102,7 @@
         newEquipment = new();
     }
 
+    // Delete equipment
     private void DeleteEquipment(string equipmentId)
     {
         if (string.IsNullOrWhiteSpace(equipmentId)) return;
@@ -129,6 +131,7 @@
         workbook.Write(fsOut);
     }
 
+    // Update Equipment information
     private void UpdateEquipment()
     {
         if (!File.Exists(filePath)) return;
@@ -165,6 +168,7 @@
         updateDailyRentalCost = 0;
     }
 
+    // Display Equipment
     private void DisplayEquipment()
     {
         equipments.Clear();
