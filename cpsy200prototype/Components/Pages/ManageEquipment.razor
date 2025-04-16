@@ -15,6 +15,7 @@
         <input type="number" @bind="newEquipment.DailyRentalCost" placeholder="Daily Rental Cost" />
         <button @onclick="() => AddEquipment(newEquipment)">Add Equipment</button>
     </div>
+    <br />
     <div>
         <h4>Update Equipment</h4>
         <input type="text" @bind="updateEquipmentId" placeholder="Equipment ID" />
@@ -24,11 +25,13 @@
         <input type="number" @bind="updateDailyRentalCost" placeholder="Daily Rental Cost" />
         <button @onclick="UpdateEquipment">Update Equipment</button>
     </div>
+    <br />
     <div>
         <h4>Delete Equipment</h4>
         <input type="text" @bind="updateEquipmentId" placeholder="Equipment ID" />
         <button @onclick="() => DeleteEquipment(updateEquipmentId)">Delete Equipment</button>
     </div>
+    <br />
     <div>
         <h4>Display Equipment</h4>
         <ul>
