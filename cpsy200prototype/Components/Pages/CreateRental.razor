@@ -13,40 +13,73 @@
         <h4>Search Customer</h4>
         <input type="text" @bind="searchCustomerId" placeholder="Customer ID" />
         <button @onclick="SearchCustomer">Search</button>
+    </div>
+    <div>
+        <h4>Selected Customer</h4>
         @if (selectedCustomer != null)
         {
-            <p>@($"Customer ID: {selectedCustomer.CustomerId} - {selectedCustomer.FirstName} {selectedCustomer.LastName}")</p>
+            <p>@($"{selectedCustomer.CustomerId} - {selectedCustomer.LastName} - {selectedCustomer.FirstName}")</p>
         }
     </div>
     <div>
         <h4>Search Equipment</h4>
         <input type="text" @bind="searchEquipmentId" placeholder="Equipment ID" />
         <button @onclick="SearchEquipment">Search</button>
-        @if (selectedEquipment != null)
-        {
-            <p>@($"Equipment ID: {selectedEquipment.EquipmentId} - {selectedEquipment.EquipmentName} - {selectedEquipment.Category} - {selectedEquipment.Description} - {selectedEquipment.DailyRentalCost}")</p>
-        }
     </div>
     <div>
-        <h4>Rental Details</h4>
-        <label>Rental Date:</label>
-        <input type="date" @bind="rentalDate" />
-        <label>Return Date:</label>
-        <input type="date" @bind="returnDate" />
-        <button @onclick="AddRentalItem">Add Rental Item</button>
+        <h4>Selected Equipment</h4>
+        @if (selectedEquipment != null)
+        {
+            <p>@($"{selectedEquipment.EquipmentId} - {selectedEquipment.EquipmentName} - {selectedEquipment.Category} - {selectedEquipment.Description} - {selectedEquipment.DailyRentalCost}")</p>
+            <input type="date" @bind="rentalDate" />
+            <input type="date" @bind="returnDate" />
+            <button @onclick="AddRentalItem">Add Rental Item</button>
+        }
     </div>
     <div>
         <h4>Rental Items</h4>
         <ul>
             @foreach (var item in rentalItems)
             {
-                <li>@($"{item.Equipment.EquipmentId} - {item.Equipment.EquipmentName} - {item.RentalDate.ToShortDateString()} - {item.ReturnDate.ToShortDateString()} - {item.TotalCost:C}")</li>
+                <li>
+                    @($"{item.Equipment.EquipmentId} - {item.Equipment.EquipmentName} - {item.RentalDate.ToShortDateString()} - {item.ReturnDate.ToShortDateString()} - {item.TotalCost}")
+                    <button @onclick="() => RemoveItem(item)">Remove</button>
+                </li>
             }
         </ul>
-        <p>Total Cost: @($"{totalCost:C}")</p>
+        <p>Total Cost: @totalCost</p>
+        <button @onclick="CreateRentals">Create Rentals</button>
     </div>
     <div>
-        <button @onclick="CreateRentals">Create Rentals</button>
+        <h4>Display Rentals</h4>
+        <button @onclick="DisplayRentals">Show Rentals</button>
+        <ul>
+            @if (rentals.Count > 0)
+            {
+                @foreach (var group in rentals.GroupBy(r => new { r.RentalId, r.CustomerId }))
+                {
+                    var totalGroupCost = group.Sum(r => r.Cost);
+                    var sample = group.First();
+
+                    <li>
+                        <strong>@($"{sample.CustomerFirstName} {sample.CustomerLastName} - {sample.RentalId}")</strong><br />
+                        <ul>
+                            @foreach (var rental in group)
+                            {
+                                <li>
+                                    @($"{rental.EquipmentId} - {rental.EquipmentName} - {rental.RentalDate:yyyy-MM-dd} - {rental.ReturnDate:yyyy-MM-dd} - {rental.Cost:C}")
+                                </li>
+                            }
+                        </ul>
+                        <p><strong>Total for this rental: @totalGroupCost.ToString("C")</strong></p>
+                    </li>
+                }
+            }
+            else
+            {
+                <li>No rentals available.</li>
+            }
+        </ul>
     </div>
 </div>
 
@@ -59,6 +92,24 @@
         public DateTime ReturnDate { get; set; }
         public decimal TotalCost => (decimal)(ReturnDate - RentalDate).TotalDays * Equipment.DailyRentalCost;
     }
+
+    public class Rental
+    {
+        public string RentalId { get; set; }
+        public DateTime RentalDate { get; set; }
+        public DateTime ReturnDate { get; set; }
+        public string CustomerId { get; set; }
+        public string CustomerLastName { get; set; }
+        public string CustomerFirstName { get; set; }
+        public string EquipmentId { get; set; }
+        public string EquipmentName { get; set; }
+        public string Category { get; set; }
+        public string Description { get; set; }
+        public decimal DailyRentalCost { get; set; }
+        public decimal Cost { get; set; }
+    }
+
+    private List<Rental> rentals = new();
 
     private string searchCustomerId;
     private Client selectedCustomer;
@@ -95,7 +146,6 @@
         }
     }
 
-    // Search Equipment has a hidden error where it doesnt show anything
     void SearchEquipment()
     {
         using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
@@ -109,16 +159,16 @@
             var row = sheet.GetRow(i);
             if (row == null) continue;
 
-            var equipmentIdCell = row.GetCell(7);
+            var equipmentIdCell = row.GetCell(0);
             if (equipmentIdCell?.ToString() == searchEquipmentId)
             {
                 selectedEquipment = new Equipment
                     {
                         EquipmentId = equipmentIdCell?.ToString(),
-                        EquipmentName = row.GetCell(8)?.ToString(),
-                        Category = row.GetCell(9)?.ToString(),
-                        Description = row.GetCell(10)?.ToString(),
-                        DailyRentalCost = decimal.TryParse(row.GetCell(11)?.ToString(), out var cost) ? cost : 0
+                        EquipmentName = row.GetCell(1)?.ToString(),
+                        Category = row.GetCell(2)?.ToString(),
+                        Description = row.GetCell(3)?.ToString(),
+                        DailyRentalCost = decimal.TryParse(row.GetCell(4)?.ToString(), out var cost) ? cost : 0
                     };
                 break;
             }
@@ -127,21 +177,23 @@
 
     void AddRentalItem()
     {
-        if (selectedEquipment is null) return;
+        if (selectedEquipment is null || selectedCustomer is null) return;
 
         rentalItems.Add(new RentalItem
-        {
-            Equipment = selectedEquipment,
-            RentalDate = rentalDate,
-            ReturnDate = returnDate
-        });
+            {
+                Equipment = selectedEquipment,
+                RentalDate = rentalDate,
+                ReturnDate = returnDate
+            });
 
         selectedEquipment = null;
-        searchCustomerId = "";
+        searchEquipmentId = "";
     }
 
     void CreateRentals()
     {
+        if (selectedCustomer == null || rentalItems.Count == 0) return;
+
         if (!Directory.Exists(directoryPath))
         {
             Directory.CreateDirectory(directoryPath);
@@ -162,23 +214,77 @@
             sheet = workbook.CreateSheet("Rentals");
         }
 
-        int rowIndex = Math.Max(13, sheet.LastRowNum + 1);
+        int rowIndex = sheet.LastRowNum < 13 ? 13 : sheet.LastRowNum + 1;
+        string rentalId = $"RENT-{DateTime.Now:yyyyMMddHHmmss}";
 
-        IRow row = sheet.CreateRow(rowIndex);
-        row.CreateCell(0).SetCellValue("Rental ID");
-        row.CreateCell(1).SetCellValue("Rental Date");
-        row.CreateCell(2).SetCellValue("Return Date");
-        row.CreateCell(3).SetCellValue("Customer ID");
-        row.CreateCell(4).SetCellValue("Customer Last Name");
-        row.CreateCell(5).SetCellValue("Customer First Name");
-        row.CreateCell(6).SetCellValue("Equipment ID");
-        row.CreateCell(7).SetCellValue("Equipment Name");
-        row.CreateCell(8).SetCellValue("Category");
-        row.CreateCell(9).SetCellValue("Description");
-        row.CreateCell(10).SetCellValue("Daily Rental Cost");
-        row.CreateCell(11).SetCellValue("Total Cost");
+        foreach (var item in rentalItems)
+        {
+            var row = sheet.CreateRow(rowIndex++);
+            row.CreateCell(0).SetCellValue(rentalId);
+            row.CreateCell(1).SetCellValue(item.RentalDate.ToShortDateString());
+            row.CreateCell(2).SetCellValue(item.ReturnDate.ToShortDateString());
+            row.CreateCell(3).SetCellValue(selectedCustomer.CustomerId);
+            row.CreateCell(4).SetCellValue(selectedCustomer.LastName);
+            row.CreateCell(5).SetCellValue(selectedCustomer.FirstName);
+            row.CreateCell(6).SetCellValue(item.Equipment.EquipmentId);
+            row.CreateCell(7).SetCellValue(item.Equipment.EquipmentName);
+            row.CreateCell(8).SetCellValue(item.Equipment.Category);
+            row.CreateCell(9).SetCellValue(item.Equipment.Description);
+            row.CreateCell(10).SetCellValue((double)item.Equipment.DailyRentalCost);
+            row.CreateCell(11).SetCellValue((double)item.TotalCost);
+        }
 
         using var fsOut = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         workbook.Write(fsOut);
+
+        rentalItems.Clear();
+    }
+
+    void DisplayRentals()
+    {
+        rentals.Clear();
+
+        if (!File.Exists(filePath)) return;
+
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        var workbook = new XSSFWorkbook(fs);
+        var sheet = workbook.GetSheet("Rentals");
+
+        if (sheet == null) return;
+
+        for (int i = 1; i <= sheet.LastRowNum; i++)
+        {
+            var row = sheet.GetRow(i);
+            if (row == null || row.GetCell(0) == null) continue;
+
+            string rentalIdCell = row.GetCell(0).ToString();
+            if (rentalIdCell == "Rental ID") continue;
+
+            var rental = new Rental
+                {
+                    RentalId = row.GetCell(0)?.ToString(),
+
+                    RentalDate = DateTime.TryParse(row.GetCell(1)?.ToString(), out var rDate) ? rDate : DateTime.MinValue,
+                    ReturnDate = DateTime.TryParse(row.GetCell(2)?.ToString(), out var retDate) ? retDate : DateTime.MinValue,
+
+                    CustomerId = row.GetCell(3)?.ToString(),
+                    CustomerLastName = row.GetCell(4)?.ToString(),
+                    CustomerFirstName = row.GetCell(5)?.ToString(),
+                    EquipmentId = row.GetCell(6)?.ToString(),
+                    EquipmentName = row.GetCell(7)?.ToString(),
+                    Category = row.GetCell(8)?.ToString(),
+                    Description = row.GetCell(9)?.ToString(),
+
+                    DailyRentalCost = decimal.TryParse(row.GetCell(10)?.ToString(), out var cost) ? cost : 0,
+                    Cost = decimal.TryParse(row.GetCell(11)?.ToString(), out var total) ? total : 0
+                };
+
+            rentals.Add(rental);
+        }
+    }
+
+    void RemoveItem(RentalItem item)
+    {
+        rentalItems.Remove(item);
     }
 }

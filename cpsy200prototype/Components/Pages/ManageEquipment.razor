@@ -52,10 +52,9 @@
     }
 
     string directoryPath = @"C:\Users\mryla\Documents\FBE\cpsy200prototype\cpsy200prototype\Services";
-
     string filePath => Path.Combine(directoryPath, "data-samples.xlsx");
-    private List<Equipment> equipments = new();
 
+    private List<Equipment> equipments = new();
     private Equipment newEquipment = new Equipment();
     private string updateEquipmentId;
     private string updateEquipmentName;
@@ -68,9 +67,8 @@
         if (string.IsNullOrWhiteSpace(newEquipment.EquipmentId)) return;
 
         if (!Directory.Exists(directoryPath))
-        {
             Directory.CreateDirectory(directoryPath);
-        }
+
         IWorkbook workbook;
         ISheet sheet;
 
@@ -78,7 +76,7 @@
         {
             using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             workbook = new XSSFWorkbook(fs);
-            sheet = workbook.GetSheetAt(0);
+            sheet = workbook.GetSheet("Equipment") ?? workbook.CreateSheet("Equipment");
         }
         else
         {
@@ -88,54 +86,44 @@
 
         int rowCount = sheet.LastRowNum < 5 ? 5 : sheet.LastRowNum + 1;
         IRow row = sheet.CreateRow(rowCount);
-        row.CreateCell(7).SetCellValue(newEquipment.EquipmentId);
-        row.CreateCell(8).SetCellValue(newEquipment.EquipmentName);
-        row.CreateCell(9).SetCellValue(newEquipment.Category);
-        row.CreateCell(10).SetCellValue(newEquipment.Description);
-        row.CreateCell(11).SetCellValue((double)newEquipment.DailyRentalCost);
+        row.CreateCell(0).SetCellValue(newEquipment.EquipmentId);
+        row.CreateCell(1).SetCellValue(newEquipment.EquipmentName);
+        row.CreateCell(2).SetCellValue(newEquipment.Category);
+        row.CreateCell(3).SetCellValue(newEquipment.Description);
+        row.CreateCell(4).SetCellValue((double)newEquipment.DailyRentalCost);
 
-        using (var fsOut = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-            workbook.Write(fsOut);
+        using var fsOut = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        workbook.Write(fsOut);
 
         newEquipment = new();
-
     }
 
     private void DeleteEquipment(string equipmentId)
     {
         if (string.IsNullOrWhiteSpace(equipmentId)) return;
 
-        IWorkbook workbook;
-        ISheet sheet;
-
-        using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-        {
-            workbook = new XSSFWorkbook(fs);
-            sheet = workbook.GetSheetAt(0);
-        }
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        IWorkbook workbook = new XSSFWorkbook(fs);
+        ISheet sheet = workbook.GetSheet("Equipment");
+        if (sheet == null) return;
 
         for (int i = 5; i <= sheet.LastRowNum; i++)
         {
             IRow row = sheet.GetRow(i);
             if (row == null) continue;
 
-            string existingId = row.GetCell(7)?.ToString();
+            string existingId = row.GetCell(0)?.ToString();
             if (existingId == equipmentId)
             {
                 sheet.RemoveRow(row);
-
                 if (i < sheet.LastRowNum)
-                {
                     sheet.ShiftRows(i + 1, sheet.LastRowNum, -1);
-                }
-
                 break;
             }
         }
 
         using var fsOut = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         workbook.Write(fsOut);
-
     }
 
     private void UpdateEquipment()
@@ -144,24 +132,25 @@
 
         using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
         IWorkbook workbook = new XSSFWorkbook(fs);
-        ISheet sheet = workbook.GetSheetAt(0);
+        ISheet sheet = workbook.GetSheet("Equipment");
+        if (sheet == null) return;
 
         for (int i = 5; i <= sheet.LastRowNum; i++)
         {
             IRow row = sheet.GetRow(i);
             if (row == null) continue;
 
-            string existingId = row.GetCell(7)?.ToString();
+            string existingId = row.GetCell(0)?.ToString();
             if (existingId == updateEquipmentId)
             {
                 if (!string.IsNullOrWhiteSpace(updateEquipmentName))
-                    row.GetCell(8).SetCellValue(updateEquipmentName);
+                    row.GetCell(1).SetCellValue(updateEquipmentName);
                 if (!string.IsNullOrWhiteSpace(updateCategory))
-                    row.GetCell(9).SetCellValue(updateCategory);
+                    row.GetCell(2).SetCellValue(updateCategory);
                 if (!string.IsNullOrWhiteSpace(updateDescription))
-                    row.GetCell(10).SetCellValue(updateDescription);
+                    row.GetCell(3).SetCellValue(updateDescription);
                 if (updateDailyRentalCost > 0)
-                    row.GetCell(11).SetCellValue((double)updateDailyRentalCost);
+                    row.GetCell(4).SetCellValue((double)updateDailyRentalCost);
                 break;
             }
         }
@@ -180,22 +169,22 @@
 
         using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
         IWorkbook workbook = new XSSFWorkbook(fs);
-        ISheet sheet = workbook.GetSheetAt(0);
+        ISheet sheet = workbook.GetSheet("Equipment");
+        if (sheet == null) return;
 
         for (int i = 5; i <= sheet.LastRowNum; i++)
         {
             IRow row = sheet.GetRow(i);
-            if (row == null || row.GetCell(7) == null) continue;
+            if (row == null || row.GetCell(0) == null) continue;
 
             var equipment = new Equipment
-            {
-                    EquipmentId = row.GetCell(7).ToString(),
-                    EquipmentName = row.GetCell(8).ToString(),
-                    Category = row.GetCell(9).ToString(),
-                    Description = row.GetCell(10).ToString(),
-                    DailyRentalCost = (decimal)(row.GetCell(11)?.NumericCellValue ?? 0)
-
-            };
+                {
+                    EquipmentId = row.GetCell(0).ToString(),
+                    EquipmentName = row.GetCell(1).ToString(),
+                    Category = row.GetCell(2).ToString(),
+                    Description = row.GetCell(3).ToString(),
+                    DailyRentalCost = (decimal)(row.GetCell(4)?.NumericCellValue ?? 0)
+                };
             equipments.Add(equipment);
         }
     }
